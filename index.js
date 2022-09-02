@@ -14,7 +14,14 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run() {
     try {
         await client.connect();
-        console.log("database connected");
+        const flowringCollection = client.db('ankur-nursary').collection('flowrings');
+
+        app.get('/flowring', async (req, res) => {
+            const query = {};
+            const cursor = flowringCollection.find(query);
+            const flowrings = await cursor.toArray();
+            res.send(flowrings);
+        })
     }
     finally {
 
