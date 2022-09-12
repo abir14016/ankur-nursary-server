@@ -83,6 +83,23 @@ async function run() {
             const result = await orderCollection.updateOne(filter, updatedDoc, options);
             res.send(result);
         });
+
+        //load all orders
+        app.get('/order', async (req, res) => {
+            const query = {};
+            const cursor = orderCollection.find(query);
+            const orders = await cursor.toArray();
+            res.send(orders);
+        });
+
+        //load orders query by email
+        app.get('/order/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email: email };
+            const cursor = orderCollection.find(query);
+            const orders = await cursor.toArray();
+            res.send(orders);
+        });
     }
     finally {
 
