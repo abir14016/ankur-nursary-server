@@ -17,6 +17,7 @@ async function run() {
         const flowringCollection = client.db('ankur-nursary').collection('flowrings');
         const medicinalCollection = client.db('ankur-nursary').collection('medicinals');
 
+        //load all flowring plants
         app.get('/flowring', async (req, res) => {
             const query = {};
             const cursor = flowringCollection.find(query);
@@ -24,6 +25,7 @@ async function run() {
             res.send(flowrings);
         });
 
+        //load all medicinal plant
         app.get('/medicinal', async (req, res) => {
             const query = {};
             const cursor = medicinalCollection.find(query);
@@ -31,12 +33,28 @@ async function run() {
             res.send(medicinals);
         });
 
+        //load single medicinal plant by is
         app.get('/medicinal/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const medicinal = await medicinalCollection.findOne(query);
             res.send(medicinal);
         });
+
+        //update single medicinal plant by id
+        app.put('/medicinal/:id', async (req, res) => {
+            const id = req.params.id;
+            const medicinal = req.body;
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: {
+                    quantity: medicinal.quantity
+                }
+            };
+            const result = await medicinalCollection.updateOne(filter, updatedDoc, options);
+            res.send(result);
+        })
     }
     finally {
 
