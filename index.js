@@ -17,6 +17,7 @@ async function run() {
         const flowringCollection = client.db('ankur-nursary').collection('flowrings');
         const medicinalCollection = client.db('ankur-nursary').collection('medicinals');
         const userCollection = client.db('ankur-nursary').collection('users');
+        const orderCollection = client.db('ankur-nursary').collection('orders');
 
         // upsert userCollection
         app.put('/user/:email', async (req, res) => {
@@ -55,7 +56,7 @@ async function run() {
             res.send(medicinal);
         });
 
-        //update single medicinal plant by id(order api)
+        //update single medicinal plant by id
         app.put('/medicinal/:id', async (req, res) => {
             const id = req.params.id;
             const medicinal = req.body;
@@ -63,10 +64,23 @@ async function run() {
             const options = { upsert: true };
             const updatedDoc = {
                 $set: {
-                    quantity: medicinal.quantity
+                    quantity: medicinal.updatedQuantity
                 }
             };
             const result = await medicinalCollection.updateOne(filter, updatedDoc, options);
+            res.send(result);
+        });
+
+        //update order api
+        app.put('/order', async (req, res) => {
+            const id = req.params.id;
+            const medicinal = req.body;
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: medicinal
+            };
+            const result = await orderCollection.updateOne(filter, updatedDoc, options);
             res.send(result);
         });
     }
