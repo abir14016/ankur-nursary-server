@@ -16,6 +16,20 @@ async function run() {
         await client.connect();
         const flowringCollection = client.db('ankur-nursary').collection('flowrings');
         const medicinalCollection = client.db('ankur-nursary').collection('medicinals');
+        const userCollection = client.db('ankur-nursary').collection('users');
+
+        // upsert userCollection
+        app.put('/user/:email', async (req, res) => {
+            const email = req.params.email;
+            const user = req.body;
+            const filter = { email: email };
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: user,
+            };
+            const result = await userCollection.updateOne(filter, updatedDoc, options);
+            res.send(result);
+        });
 
         //load all flowring plants
         app.get('/flowring', async (req, res) => {
@@ -41,7 +55,7 @@ async function run() {
             res.send(medicinal);
         });
 
-        //update single medicinal plant by id
+        //update single medicinal plant by id(order api)
         app.put('/medicinal/:id', async (req, res) => {
             const id = req.params.id;
             const medicinal = req.body;
@@ -54,7 +68,7 @@ async function run() {
             };
             const result = await medicinalCollection.updateOne(filter, updatedDoc, options);
             res.send(result);
-        })
+        });
     }
     finally {
 
