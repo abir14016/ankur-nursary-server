@@ -18,6 +18,7 @@ async function run() {
         const medicinalCollection = client.db('ankur-nursary').collection('medicinals');
         const userCollection = client.db('ankur-nursary').collection('users');
         const orderCollection = client.db('ankur-nursary').collection('orders');
+        const reviewCollection = client.db('ankur-nursary').collection('reviews');
 
         // upsert userCollection
         app.put('/user/:email', async (req, res) => {
@@ -100,6 +101,31 @@ async function run() {
             const orders = await cursor.toArray();
             res.send(orders);
         });
+
+        //review api--------------------------------
+
+        //upsert review collection
+        app.put('/review/:email', async (req, res) => {
+            const email = req.params.email;
+            const review = req.body;
+            const filter = { email: email };
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: review,
+            };
+            const result = await reviewCollection.updateOne(filter, updatedDoc, options);
+            res.send(result);
+        });
+
+        //load all reviews
+        app.get('/review', async (req, res) => {
+            const query = {};
+            const cursor = reviewCollection.find(query);
+            const reviews = await cursor.toArray();
+            res.send(reviews);
+        });
+
+        //review api--------------------------------        
     }
     finally {
 
