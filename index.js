@@ -33,6 +33,15 @@ async function run() {
             res.send(result);
         });
 
+        //load all users
+        app.get('/user', async (req, res) => {
+            const query = {};
+            const cursor = userCollection.find(query);
+            const users = await cursor.toArray();
+            res.send(users);
+        });
+
+
         //load all flowring plants
         app.get('/flowring', async (req, res) => {
             const query = {};
@@ -72,6 +81,8 @@ async function run() {
             res.send(result);
         });
 
+        //order api--------------------------------
+
         //update order api
         app.put('/order', async (req, res) => {
             const id = req.params.id;
@@ -101,6 +112,7 @@ async function run() {
             const orders = await cursor.toArray();
             res.send(orders);
         });
+        //order api--------------------------------
 
         //review api--------------------------------
 
@@ -125,7 +137,21 @@ async function run() {
             res.send(reviews);
         });
 
-        //review api--------------------------------        
+        //review api--------------------------------  
+
+
+        //admin api--------------------------------  
+        app.put('/user/admin/:email', async (req, res) => {
+            const email = req.params.email;
+            const filter = { email: email };
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: { role: 'admin' },
+            };
+            const result = await userCollection.updateOne(filter, updatedDoc, options);
+            res.send(result);
+        });
+        //admin api--------------------------------      
     }
     finally {
 
