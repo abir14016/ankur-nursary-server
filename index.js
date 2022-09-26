@@ -19,6 +19,8 @@ async function run() {
         const userCollection = client.db('ankur-nursary').collection('users');
         const orderCollection = client.db('ankur-nursary').collection('orders');
         const reviewCollection = client.db('ankur-nursary').collection('reviews');
+        const ownerCollection = client.db('ankur-nursary').collection('owners');
+        const memberCollection = client.db('ankur-nursary').collection('members');
 
         // upsert userCollection
         app.put('/user/:email', async (req, res) => {
@@ -140,8 +142,23 @@ async function run() {
         //review api--------------------------------  
 
 
-        //admin api--------------------------------  
+        //about api--------------------------------
+        app.get('/owner', async (req, res) => {
+            const query = {};
+            const cursor = ownerCollection.find(query);
+            const users = await cursor.toArray();
+            res.send(users);
+        });
 
+        app.get('/member', async (req, res) => {
+            const query = {};
+            const cursor = memberCollection.find(query);
+            const users = await cursor.toArray();
+            res.send(users);
+        });
+        //about api--------------------------------
+
+        //admin api-------------------------------- 
         //check admin api
         app.get('/admin/:email', async (req, res) => {
             const email = req.params.email;
